@@ -6,26 +6,31 @@
     <title>Despacho #{{ $despacho->id }}</title>
     <style>
         @page {
-            size: letter;
-            margin: 0.5in;
-        }
+    size: letter;
+    margin: 0.75in;
+}
 
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        
-        body {
-            font-family: Arial, sans-serif;
-            font-size: 10px;
-            color: #000;
-        }
-        
-        .container {
-            width: 100%;
-            padding: 10px;
-        }
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html, body {
+    width: 100%;
+    max-width: 8.5in;
+    margin: 0 auto;
+    font-family: Arial, sans-serif;
+    font-size: 9px;
+    color: #000;
+}
+
+.container {
+    width: 100%;
+    max-width: 7in;
+    margin: 0 auto;
+    padding: 5px;
+}
         
         /* HEADER */
         .header {
