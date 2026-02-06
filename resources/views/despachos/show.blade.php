@@ -1,25 +1,26 @@
-<x-slot name="header">
-    <div class="flex justify-between items-center">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            {{ __('Detalle del Despacho #') }}{{ $despacho->id }}
-        </h2>
-        <div class="flex gap-2">
-            <a 
-                href="{{ route('despachos.pdf', $despacho->id) }}"
-                class="px-4 py-2 bg-red-600 hover:bg-red-700 text-white font-semibold rounded-lg transition duration-200 shadow-md"
-                target="_blank"
-            >
-                📄 Descargar PDF
-            </a>
-            <a 
-                href="{{ route('despachos.index') }}"
-                class="px-4 py-2 bg-gray-200 hover:bg-gray-300 text-gray-800 font-semibold rounded-lg transition duration-200"
-            >
-                ← Volver al Listado
-            </a>
+<x-app-layout>
+    <x-slot name="header">
+        <div class="flex justify-between items-center">
+            <h2 class="font-semibold text-xl text-gray-800 leading-tight">
+                {{ __('Detalle del Despacho #') }}{{ $despacho->id }}
+            </h2>
+            <div class="flex gap-2">
+                <a 
+                    href="{{ route('despachos.pdf', $despacho->id) }}"
+                    class="px-4 py-2 bg-red-600 hover:bg-red-700 text-white font-semibold rounded-lg transition duration-200 shadow-md"
+                    target="_blank"
+                >
+                    📄 Descargar PDF
+                </a>
+                <a 
+                    href="{{ route('despachos.index') }}"
+                    class="px-4 py-2 bg-gray-200 hover:bg-gray-300 text-gray-800 font-semibold rounded-lg transition duration-200"
+                >
+                    ← Volver al Listado
+                </a>
+            </div>
         </div>
-    </div>
-</x-slot>
+    </x-slot>
 
     <div class="py-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
@@ -48,7 +49,9 @@
                         </div>
                         <div>
                             <p class="text-sm text-gray-600">Fecha de Expedición:</p>
-                            <p class="font-semibold">{{ $despacho->fecha_expedicion ? $despacho->fecha_expedicion->format('d/m/Y H:i:s') : '-' }}</p>
+                            <p class="font-semibold">
+                                {{ $despacho->fecha_expedicion ? $despacho->fecha_expedicion->format('d/m/Y H:i:s') : '-' }}
+                            </p>
                         </div>
                         <div>
                             <p class="text-sm text-gray-600">Archivo Original:</p>
@@ -80,7 +83,7 @@
                                         <td class="px-4 py-3 text-sm font-mono">{{ $producto->codigo_producto }}</td>
                                         <td class="px-4 py-3 text-sm">{{ $producto->descripcion_producto }}</td>
                                         <td class="px-4 py-3 text-sm text-gray-600">
-                                            {{ Str::limit($producto->destino_especifico, 50) }}
+                                            {{ \Illuminate\Support\Str::limit($producto->destino_especifico, 50) }}
                                         </td>
                                         <td class="px-4 py-3 text-sm">
                                             {{ $producto->fecha_beneficio ? $producto->fecha_beneficio->format('d/m/Y') : '-' }}

@@ -32,86 +32,103 @@ class DespachoImport implements ToCollection
                 'placa_remolque' => $placaRemolque,
                 'destino_general' => $destinoGeneral,
                 'fecha_expedicion' => $fechaExpedicion,
-                'lenguas' => 0, // Se calculará después
+                'lenguas' => 0,
                 'archivo_original' => request()->file('excel_file')->getClientOriginalName(),
                 'usuario_id' => $this->usuarioId,
             ]);
 
-            $contadorLenguas = 0;
+            // Almacenar productos agrupados por código base
+            $lenguasAgrupadas = [];
 
             // Procesar productos (a partir de la fila 14)
             for ($i = 14; $i < $rows->count(); $i++) {
                 $row = $rows[$i];
 
-                // Verificar que tenga datos
                 if (empty($row[0])) continue;
 
                 $codigoCompleto = trim($row[0] ?? '');
                 if (empty($codigoCompleto)) continue;
 
-                // Extraer código y descripción
+                // Extraer solo el código (sin descripción)
                 $partes = explode(' ', $codigoCompleto, 2);
-                $codigoProducto = $partes[0] ?? $codigoCompleto;
-                $descripcionProducto = $partes[1] ?? '';
+                $codigo = $partes[0] ?? $codigoCompleto;
 
-                // Parsear valores numéricos de forma segura
-                $pesoFrio = $this->parseDecimal($row[1] ?? 0);
-                $pesoCaliente = $this->parseDecimal($row[2] ?? 0);
-                $temperatura = $this->parseDecimal($row[3] ?? null);
-                
+                // Obtener código base: 2601-11413-1001 -> 2601-11413
+                $codigoBase = $this->obtenerCodigoBase($codigo);
+
+                // Convertir a código lengua: 2601-11413 -> 2601-11413-6000
+                $codigoLengua = $codigoBase . '-6000';
+
+                // Parsear valores
                 $decomisos = trim($row[4] ?? '');
                 $destinoEspecifico = trim($row[5] ?? '');
                 $fechaBeneficio = $this->parseFecha($row[6] ?? null);
 
-                // Crear producto del despacho
-                DespachoProducto::create([
-                    'despacho_id' => $despacho->id,
-                    'codigo_producto' => $codigoProducto,
-                    'descripcion_producto' => $descripcionProducto,
-                    'peso_frio' => $pesoFrio,
-                    'peso_caliente' => $pesoCaliente,
-                    'temperatura' => $temperatura,
-                    'decomisos' => $decomisos,
-                    'destino_especifico' => $destinoEspecifico,
-                    'fecha_beneficio' => $fechaBeneficio,
-                ]);
-
-                $contadorLenguas++;
+                // Agrupar por código base para evitar duplicados
+                if (!isset($lenguasAgrupadas[$codigoBase])) {
+                    $lenguasAgrupadas[$codigoBase] = [
+                        'codigo' => $codigoLengua,
+                        'destino' => $destinoEspecifico,
+                        'fecha' => $fechaBeneficio,
+                        'decomisos' => $decomisos,
+                    ];
+                }
             }
 
-            // Actualizar cantidad de lenguas
-            $despacho->update(['lenguas' => $contadorLenguas]);
+            // Guardar las lenguas (sin duplicados)
+            foreach ($lenguasAgrupadas as $lengua) {
+                DespachoProducto::create([
+                    'despacho_id' => $despacho->id,
+                    'codigo_producto' => $lengua['codigo'],
+                    'descripcion_producto' => 'LENGUA',
+                    'peso_frio' => 0,
+                    'peso_caliente' => 0,
+                    'temperatura' => null,
+                    'decomisos' => $lengua['decomisos'],
+                    'destino_especifico' => $lengua['destino'],
+                    'fecha_beneficio' => $lengua['fecha'],
+                ]);
+            }
+
+            // Actualizar cantidad de lenguas (1 por animal)
+            $despacho->update(['lenguas' => count($lenguasAgrupadas)]);
 
         } catch (\Exception $e) {
-            // Propagar error para mostrarlo en la interfaz
             throw new \Exception('Error al procesar el archivo: ' . $e->getMessage());
         }
     }
 
     /**
+     * Obtener código base del animal (sin sufijo)
+     * Ejemplo: 2601-11413-1001 -> 2601-11413
+     */
+    private function obtenerCodigoBase($codigo)
+    {
+        // Dividir por guiones
+        $partes = explode('-', $codigo);
+
+        // Si tiene 3 partes, tomar las primeras 2
+        if (count($partes) >= 3) {
+            return $partes[0] . '-' . $partes[1];
+        }
+
+        return $codigo;
+    }
+
+    /**
      * Parsear un valor decimal de forma segura
-     * Maneja: "0,0", "0.0", "0", null, etc.
      */
     private function parseDecimal($valor)
     {
-        // Si es null o vacío, retornar null
         if ($valor === null || $valor === '') {
             return null;
         }
 
-        // Convertir a string para procesamiento
         $valor = (string)$valor;
-
-        // Reemplazar coma por punto (formato decimal)
         $valor = str_replace(',', '.', $valor);
-
-        // Limpiar espacios
         $valor = trim($valor);
-
-        // Convertir a float
         $resultado = floatval($valor);
 
-        // Si el resultado es 0 y el valor original no era "0", retornar null
         if ($resultado == 0 && !in_array($valor, ['0', '0.0', '0,0'])) {
             return null;
         }
@@ -129,16 +146,13 @@ class DespachoImport implements ToCollection
         }
 
         try {
-            // Si es un número (timestamp de Excel)
             if (is_numeric($fecha)) {
                 return Carbon::instance(
                     \PhpOffice\PhpSpreadsheet\Shared\Date::excelToDateTimeObject($fecha)
                 );
             }
 
-            // Si es string, intentar parsear
             if (is_string($fecha)) {
-                // Formatos comunes
                 $formatos = [
                     'd/m/Y H:i:s',
                     'd/m/Y H:i',
@@ -156,7 +170,6 @@ class DespachoImport implements ToCollection
                     }
                 }
 
-                // Si ningún formato funcionó, intentar con Carbon::parse
                 return Carbon::parse($fecha);
             }
 

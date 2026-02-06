@@ -153,48 +153,38 @@
             </div>
         </div>
         
-        <!-- TABLA DE PRODUCTOS -->
+        <!-- TABLA DE PRODUCTOS - COLUMNAS REDUCIDAS -->
         <table>
             <thead>
                 <tr>
-                    <th style="width: 12%;">Código</th>
-                    <th style="width: 18%;">Descripción</th>
-                    <th style="width: 10%;">Peso Frío</th>
-                    <th style="width: 10%;">Peso Caliente</th>
-                    <th style="width: 8%;">Temp. (°C)</th>
-                    <th style="width: 12%;">Fecha Beneficio</th>
-                    <th style="width: 30%;">Destino</th>
+                    <th style="width: 15%;">Código</th>
+                    <th style="width: 15%;">Descripción</th>
+                    <th style="width: 15%;">Fecha Beneficio</th>
+                    <th style="width: 55%;">Destino</th>
                 </tr>
             </thead>
             <tbody>
                 @php
-                    $totalPesoFrio = 0;
-                    $totalPesoCaliente = 0;
+                    $totalLenguas = 0;
                 @endphp
                 
                 @foreach($despacho->productos as $producto)
                     @php
-                        $totalPesoFrio += $producto->peso_frio;
-                        $totalPesoCaliente += $producto->peso_caliente;
+                        $totalLenguas++;
                     @endphp
                     <tr>
                         <td>{{ $producto->codigo_producto }}</td>
                         <td>{{ $producto->descripcion_producto ?? '-' }}</td>
-                        <td>{{ number_format($producto->peso_frio, 2) }} kg</td>
-                        <td>{{ number_format($producto->peso_caliente, 2) }} kg</td>
-                        <td>{{ $producto->temperatura ? number_format($producto->temperatura, 1) . '°' : '-' }}</td>
                         <td>{{ $producto->fecha_beneficio ? $producto->fecha_beneficio->format('d/m/Y') : '-' }}</td>
-                        <td>{{ Str::limit($producto->destino_especifico, 60) }}</td>
+                        <td>{{ $producto->destino_especifico ?? '-' }}</td>
                     </tr>
                 @endforeach
             </tbody>
         </table>
         
-        <!-- TOTALES -->
+        <!-- TOTALES SIMPLIFICADO -->
         <div class="totales">
-            <p>📦 Total de Productos: {{ $despacho->productos->count() }}</p>
-            <p>❄️ Peso Total en Frío: {{ number_format($totalPesoFrio, 2) }} kg</p>
-            <p>🔥 Peso Total en Caliente: {{ number_format($totalPesoCaliente, 2) }} kg</p>
+            <p>📦 Total de Lenguas: {{ $despacho->lenguas }}</p>
         </div>
         
         <!-- FOOTER -->
