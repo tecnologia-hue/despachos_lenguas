@@ -5,6 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Despacho #{{ $despacho->id }}</title>
     <style>
+        @page {
+            size: letter;
+            margin: 0.5in;
+        }
+
         * {
             margin: 0;
             padding: 0;
@@ -171,20 +176,51 @@
                 @foreach($despacho->productos as $producto)
                     @php
                         $totalLenguas++;
+                        
+                        // Formatear destino: mostrar desde el tercer "/" en adelante
+                        $destino = $producto->destino_especifico ?? '';
+                        if ($destino !== '') {
+                            $partes = explode('/', $destino);
+                            if (count($partes) >= 3) {
+                                $destinoFormateado = trim(implode('/', array_slice($partes, 2)));
+                            } else {
+                                $destinoFormateado = trim($destino);
+                            }
+                        } else {
+                            $destinoFormateado = '-';
+                        }
                     @endphp
                     <tr>
                         <td>{{ $producto->codigo_producto }}</td>
                         <td>{{ $producto->descripcion_producto ?? '-' }}</td>
                         <td>{{ $producto->fecha_beneficio ? $producto->fecha_beneficio->format('d/m/Y') : '-' }}</td>
-                        <td>{{ $producto->destino_especifico ?? '-' }}</td>
+                        <td>{{ $destinoFormateado }}</td>
                     </tr>
                 @endforeach
             </tbody>
         </table>
         
-        <!-- TOTALES SIMPLIFICADO -->
+                <!-- TOTALES SIMPLIFICADO -->
         <div class="totales">
-            <p>📦 Total de Lenguas: {{ $despacho->lenguas }}</p>
+            <p> Total de Lenguas: {{ $despacho->lenguas }}</p>
+        </div>
+        
+        <!-- SECCIÓN DE FIRMAS -->
+        <div style="margin-top: 30px; padding-top: 20px;">
+            <table style="width: 100%; border-collapse: collapse;">
+                <tr>
+                    <td style="width: 50%; text-align: center; padding: 40px 10px 10px 10px; border: none;">
+                        <div style="border-top: 1px solid #000; padding-top: 5px;">
+                            <strong>Entrega</strong>
+                        </div>
+                    </td>
+                    <td style="width: 50%; text-align: center; padding: 40px 10px 10px 10px; border: none;">
+                        <div style="border-top: 1px solid #000; padding-top: 5px;">
+                            <strong>Recibe</strong>
+                        </div>
+                    </td>
+                </tr>
+            </table>
         </div>
         
         <!-- FOOTER -->
