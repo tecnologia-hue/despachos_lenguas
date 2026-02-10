@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\DespachoController;
+use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -28,4 +29,16 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/despachos/{despacho}/llaves', [DespachoController::class, 'generateImagenLlaves'])->name('despachos.llaves');
 });
 
+// Gestión de Usuarios (solo admin)
+Route::middleware(['auth', 'role:admin'])->prefix('users')->name('users.')->group(function () {
+    Route::get('/', [UserController::class, 'index'])->name('index');
+    Route::get('/create', [UserController::class, 'create'])->name('create');
+    Route::post('/', [UserController::class, 'store'])->name('store');
+    Route::get('/{user}/edit', [UserController::class, 'edit'])->name('edit');
+    Route::put('/{user}', [UserController::class, 'update'])->name('update');
+    Route::post('/{user}/toggle-status', [UserController::class, 'toggleStatus'])->name('toggle-status');
+    Route::post('/{user}/reset-password', [UserController::class, 'resetPassword'])->name('reset-password');
+});
+
 require __DIR__.'/auth.php';
+
