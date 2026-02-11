@@ -198,7 +198,12 @@
                 <div class="info-cell info-value">{{ $despacho->lenguas }}</div>
             </div>
         </div>
-        
+        <!-- NOTA INFORMATIVA -->
+<div style="margin-bottom: 15px; padding: 10px; background-color: #f0f8ff; border-left: 4px solid #7ce8ad;">
+    <p style="font-size: 9px; line-height: 1.4; margin: 0;">
+        <strong>Nota:</strong> Los productos relacionados a continuación, se despachan a conformidad, aptos para consumo humano, no presentan cambios en sus características organolépticas.
+    </p>
+</div>
         <!-- TABLA DE PRODUCTOS - SOLO LENGUAS -->
         <table>
             <thead>
@@ -251,13 +256,7 @@
                     </td>
                 </tr>
             </table>
-        </div>
-        
-        <!-- FOOTER -->
-        <div class="footer">
-            <p>Los productos relacionados a continuación, se despachan a conformidad, aptos para consumo humano, no presentan cambios en sus características organolépticas</p>
-        </div>
-        
+        </div>        
     </div>
 </body>
 </html>
