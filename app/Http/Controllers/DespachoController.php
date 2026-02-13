@@ -67,7 +67,7 @@ class DespachoController extends Controller
     }
 
     /**
-     * Generar PDF del despacho.
+     * Generar PDF del despacho COMPLETO.
      */
     public function generatePDF(Despacho $despacho)
     {
@@ -85,7 +85,45 @@ class DespachoController extends Controller
     }
 
     /**
-     * Generar imagen PNG con llaves (destinos únicos).
+     * Generar PDF PERSONALIZADO con productos seleccionados.
+     */
+    public function generatePDFPersonalizado(Despacho $despacho, Request $request)
+    {
+        // Verificar autorización
+        if ($despacho->usuario_id !== auth()->id()) {
+            abort(403, 'No tienes permiso para ver este despacho');
+        }
+
+        // Obtener IDs de productos seleccionados desde la query string
+        $productosSeleccionados = $request->query('productos');
+        
+        if (empty($productosSeleccionados)) {
+            return back()->with('error', 'Debes seleccionar al menos un producto.');
+        }
+
+        // Convertir string separado por comas a array
+        $productosIds = explode(',', $productosSeleccionados);
+
+        // Cargar el despacho con solo los productos seleccionados
+        $despacho->load(['productos' => function ($query) use ($productosIds) {
+            $query->whereIn('id', $productosIds);
+        }]);
+
+        // Validar que haya productos
+        if ($despacho->productos->isEmpty()) {
+            return back()->with('error', 'No se encontraron productos seleccionados.');
+        }
+
+        // Generar PDF con los productos filtrados
+        $pdf = Pdf::loadView('despachos.pdf.despacho', compact('despacho'))
+            ->setPaper('a4', 'landscape')
+            ->setOption('defaultFont', 'Roboto');
+
+        return $pdf->download('despacho-' . $despacho->id . '-personalizado.pdf');
+    }
+
+    /**
+     * Generar imagen PNG con llaves COMPLETAS (todos los destinos únicos).
      */
     public function generateImagenLlaves(Despacho $despacho, ImagenLlavesService $imagenService)
     {
@@ -108,6 +146,53 @@ class DespachoController extends Controller
             return response()->download(
                 storage_path('app/public/' . $rutaImagen),
                 'llaves-despacho-' . $despacho->id . '.png'
+            )->deleteFileAfterSend(true);
+        } catch (\Exception $e) {
+            return back()->with('error', 'Error al generar imagen: ' . $e->getMessage());
+        }
+    }
+
+    /**
+     * Generar imagen PNG con llaves PERSONALIZADAS (destinos de productos seleccionados).
+     */
+    public function generateImagenLlavesPersonalizadas(Despacho $despacho, ImagenLlavesService $imagenService, Request $request)
+    {
+        // Verificar autorización
+        if ($despacho->usuario_id !== auth()->id()) {
+            abort(403, 'No tienes permiso para generar llaves de este despacho');
+        }
+
+        // Obtener IDs de productos seleccionados
+        $productosSeleccionados = $request->query('productos');
+        
+        if (empty($productosSeleccionados)) {
+            return back()->with('error', 'Debes seleccionar al menos un producto.');
+        }
+
+        // Convertir string a array
+        $productosIds = explode(',', $productosSeleccionados);
+
+        try {
+            // Cargar solo los productos seleccionados
+            $despacho->load(['productos' => function ($query) use ($productosIds) {
+                $query->whereIn('id', $productosIds);
+            }]);
+
+            // Validar que haya productos
+            if ($despacho->productos->isEmpty()) {
+                return back()->with('error', 'No se encontraron productos seleccionados.');
+            }
+
+            // Limpiar imágenes anteriores
+            $imagenService->limpiarImagenesAntiguas($despacho->id);
+
+            // Generar nueva imagen con productos filtrados
+            $rutaImagen = $imagenService->generarImagenLlaves($despacho);
+
+            // Descargar la imagen
+            return response()->download(
+                storage_path('app/public/' . $rutaImagen),
+                'llaves-despacho-' . $despacho->id . '-personalizado.png'
             )->deleteFileAfterSend(true);
         } catch (\Exception $e) {
             return back()->with('error', 'Error al generar imagen: ' . $e->getMessage());

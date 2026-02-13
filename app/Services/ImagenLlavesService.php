@@ -22,11 +22,11 @@ class ImagenLlavesService
     private const COLOR_BORDE = '#000000';
     private const COLOR_TEXTO = '#000000';
     
-    // Dimensiones compactas
+    // Dimensiones compactas - 🔴 AUMENTADAS
     private const ANCHO_IMAGEN = 1400;
-    private const ALTO_INFO = 120;
-    private const ALTO_TABLA_HEADER = 50;
-    private const ALTO_FILA = 45;
+    private const ALTO_INFO = 140; // 🔴 CAMBIADO: de 120 a 140
+    private const ALTO_TABLA_HEADER = 60; // 🔴 CAMBIADO: de 50 a 60
+    private const ALTO_FILA = 55; // 🔴 CAMBIADO: de 45 a 55
     private const PADDING = 30;
     
     // Anchos de columnas
@@ -38,8 +38,8 @@ class ImagenLlavesService
         $this->imageManager = new ImageManager(new Driver());
         
         // Configurar rutas de fuentes
-$this->fuenteRegular = public_path('storage/fonts/Roboto-Regular.ttf');
-$this->fuenteBold = public_path('storage/fonts/Roboto-Bold.ttf');
+        $this->fuenteRegular = public_path('storage/fonts/Roboto-Regular.ttf');
+        $this->fuenteBold = public_path('storage/fonts/Roboto-Bold.ttf');
         
         // Verificar que existen las fuentes
         if (!file_exists($this->fuenteRegular)) {
@@ -55,11 +55,12 @@ $this->fuenteBold = public_path('storage/fonts/Roboto-Bold.ttf');
      */
     public function generarImagenLlaves(Despacho $despacho): string
     {
-        $destinosProcesados = $despacho->productos()
-            ->select('destino_especifico')
-            ->distinct()
-            ->whereNotNull('destino_especifico')
+        // Usar ->productos (sin paréntesis) para usar la colección filtrada
+        $destinosProcesados = $despacho->productos
             ->pluck('destino_especifico')
+            ->filter(function($destino) {
+                return !empty($destino);
+            })
             ->map(function ($destino) {
                 return $this->parsearDestino($destino);
             })
@@ -121,10 +122,10 @@ $this->fuenteBold = public_path('storage/fonts/Roboto-Bold.ttf');
         $y = self::PADDING;
         $x = self::PADDING;
 
-        // Conductor
+        // Conductor - 🔴 TAMAÑO AUMENTADO
         $imagen->text('Conductor', $x, $y, function ($font) {
-            $font->filename($this->fuenteRegular);
-            $font->size(18);
+            $font->filename($this->fuenteBold); // 🔴 CAMBIADO a Bold
+            $font->size(22); // 🔴 CAMBIADO: de 18 a 22
             $font->color('#000000');
             $font->align('left');
             $font->valign('top');
@@ -132,17 +133,17 @@ $this->fuenteBold = public_path('storage/fonts/Roboto-Bold.ttf');
 
         $imagen->text($despacho->conductor ?? 'N/A', $x + 150, $y, function ($font) {
             $font->filename($this->fuenteRegular);
-            $font->size(18);
+            $font->size(22); // 🔴 CAMBIADO: de 18 a 22
             $font->color('#000000');
             $font->align('left');
             $font->valign('top');
         });
 
-        // Vehículo
-        $y += 30;
+        // Vehículo - 🔴 TAMAÑO AUMENTADO
+        $y += 38; // 🔴 CAMBIADO: de 30 a 38 (más espacio)
         $imagen->text('Vehículo', $x, $y, function ($font) {
-            $font->filename($this->fuenteRegular);
-            $font->size(18);
+            $font->filename($this->fuenteBold); // 🔴 CAMBIADO a Bold
+            $font->size(22); // 🔴 CAMBIADO: de 18 a 22
             $font->color('#000000');
             $font->align('left');
             $font->valign('top');
@@ -150,32 +151,31 @@ $this->fuenteBold = public_path('storage/fonts/Roboto-Bold.ttf');
 
         $imagen->text($despacho->placa_remolque ?? 'N/A', $x + 150, $y, function ($font) {
             $font->filename($this->fuenteRegular);
-            $font->size(18);
+            $font->size(22); // 🔴 CAMBIADO: de 18 a 22
             $font->color('#000000');
             $font->align('left');
             $font->valign('top');
         });
 
-        // N° Destinos y Kg Cargados (derecha)
-        $xDerecha = self::ANCHO_IMAGEN - self::PADDING - 250;
+        // N° Destinos (derecha) - 🔴 TAMAÑO AUMENTADO
+        $xDerecha = self::ANCHO_IMAGEN - self::PADDING - 280; // 🔴 AJUSTADO
         $y = self::PADDING;
 
         $imagen->text('N° Destinos', $xDerecha, $y, function ($font) {
-            $font->filename($this->fuenteRegular);
-            $font->size(18);
+            $font->filename($this->fuenteBold); // 🔴 CAMBIADO a Bold
+            $font->size(22); // 🔴 CAMBIADO: de 18 a 22
             $font->color('#000000');
             $font->align('left');
             $font->valign('top');
         });
 
         $imagen->text((string)$totalDestinos, $xDerecha + 150, $y, function ($font) {
-            $font->filename($this->fuenteRegular);
-            $font->size(18);
+            $font->filename($this->fuenteBold); // 🔴 CAMBIADO a Bold
+            $font->size(22); // 🔴 CAMBIADO: de 18 a 22
             $font->color('#000000');
             $font->align('right');
             $font->valign('top');
         });
-
     }
 
     private function dibujarTabla($imagen, $destinos): void
@@ -208,17 +208,19 @@ $this->fuenteBold = public_path('storage/fonts/Roboto-Bold.ttf');
             $rectangle->background(self::COLOR_BORDE);
         });
 
+        // Header "Destino" - 🔴 TAMAÑO AUMENTADO
         $imagen->text('Destino', $x + (self::ANCHO_COL_DESTINO / 2), $y + (self::ALTO_TABLA_HEADER / 2) - 1, function ($font) {
             $font->filename($this->fuenteBold);
-            $font->size(20);
+            $font->size(24); // 🔴 CAMBIADO: de 20 a 24
             $font->color(self::COLOR_HEADER_TEXT);
             $font->align('center');
             $font->valign('middle');
         });
 
+        // Header "Dirección" - 🔴 TAMAÑO AUMENTADO
         $imagen->text('Dirección', $x + self::ANCHO_COL_DESTINO + (self::ANCHO_COL_DIRECCION / 2), $y + (self::ALTO_TABLA_HEADER / 2) - 1, function ($font) {
             $font->filename($this->fuenteBold);
-            $font->size(20);
+            $font->size(24); // 🔴 CAMBIADO: de 20 a 24
             $font->color(self::COLOR_HEADER_TEXT);
             $font->align('center');
             $font->valign('middle');
@@ -241,21 +243,23 @@ $this->fuenteBold = public_path('storage/fonts/Roboto-Bold.ttf');
             $rectangle->background(self::COLOR_BORDE);
         });
 
+        // Código de destino - 🔴 TAMAÑO AUMENTADO
         $imagen->text($destino['codigo'], $x + (self::ANCHO_COL_DESTINO / 2), $y + (self::ALTO_FILA / 2) - 1, function ($font) {
-            $font->filename($this->fuenteRegular);
-            $font->size(18);
+            $font->filename($this->fuenteBold); // 🔴 CAMBIADO a Bold para destacar
+            $font->size(21); // 🔴 CAMBIADO: de 18 a 21
             $font->color(self::COLOR_TEXTO);
             $font->align('center');
             $font->valign('middle');
         });
 
-        $textoDir = strlen($destino['direccion']) > 90 
-            ? substr($destino['direccion'], 0, 87) . '...' 
+        // Dirección - 🔴 TAMAÑO AUMENTADO
+        $textoDir = strlen($destino['direccion']) > 85  // 🔴 AJUSTADO: de 90 a 85 por letra más grande
+            ? substr($destino['direccion'], 0, 82) . '...' 
             : $destino['direccion'];
 
         $imagen->text($textoDir, $x + self::ANCHO_COL_DESTINO + 15, $y + (self::ALTO_FILA / 2) - 1, function ($font) {
             $font->filename($this->fuenteRegular);
-            $font->size(17);
+            $font->size(20); // 🔴 CAMBIADO: de 17 a 20
             $font->color(self::COLOR_TEXTO);
             $font->align('left');
             $font->valign('middle');

@@ -25,8 +25,14 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/despachos/importar', [DespachoController::class, 'import'])->name('despachos.import');
     Route::post('/despachos', [DespachoController::class, 'store'])->name('despachos.store');
     Route::get('/despachos/{despacho}', [DespachoController::class, 'show'])->name('despachos.show');
+    
+    // Exportación COMPLETA (existente)
     Route::get('/despachos/{despacho}/pdf', [DespachoController::class, 'generatePDF'])->name('despachos.pdf');
     Route::get('/despachos/{despacho}/llaves', [DespachoController::class, 'generateImagenLlaves'])->name('despachos.llaves');
+    
+    // Exportación PERSONALIZADA (nueva) - Adicionales
+    Route::get('/despachos/{despacho}/pdf-personalizado', [DespachoController::class, 'generatePDFPersonalizado'])->name('despachos.pdf.personalizado');
+    Route::get('/despachos/{despacho}/llaves-personalizadas', [DespachoController::class, 'generateImagenLlavesPersonalizadas'])->name('despachos.llaves.personalizadas');
 });
 
 // Gestión de Usuarios (solo admin)
@@ -41,4 +47,3 @@ Route::middleware(['auth', 'role:admin'])->prefix('users')->name('users.')->grou
 });
 
 require __DIR__.'/auth.php';
-

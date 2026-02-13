@@ -20,7 +20,7 @@
             max-width: 8.5in;
             margin: 0 auto;
             font-family: Arial, sans-serif;
-            font-size: 9px;
+            font-size: 13px; /* 🔴 CAMBIADO: de 11px a 13px */
             color: #000;
         }
 
@@ -60,12 +60,13 @@
         }
         
         .header h1 {
-            font-size: 16px;
+            font-size: 22px; /* 🔴 CAMBIADO: de 18px a 22px */
             margin-bottom: 8px;
+            font-weight: bold;
         }
         
         .header p {
-            font-size: 9px;
+            font-size: 13px; /* 🔴 CAMBIADO: de 11px a 13px */
             margin-bottom: 3px;
         }
         
@@ -83,19 +84,22 @@
         
         .info-cell {
             display: table-cell;
-            padding: 8px;
+            padding: 10px; /* 🔴 CAMBIADO: de 8px a 10px */
             border: 1px solid #ccc;
             vertical-align: middle;
+            font-size: 13px; /* 🔴 CAMBIADO: de 11px a 13px */
         }
         
         .info-label {
             font-weight: bold;
             background-color: #f0f0f0;
             width: 30%;
+            font-size: 13px; /* 🔴 CAMBIADO: de 11px a 13px */
         }
         
         .info-value {
             width: 70%;
+            font-size: 13px; /* 🔴 CAMBIADO: de 11px a 13px */
         }
         
         /* TABLE */
@@ -110,17 +114,17 @@
         th {
             background-color: #7ce8ad;
             color: #000;
-            padding: 10px 8px;
+            padding: 12px 10px; /* 🔴 CAMBIADO: de 10px 8px a 12px 10px */
             text-align: left;
-            font-size: 9px;
+            font-size: 13px; /* 🔴 CAMBIADO: de 11px a 13px */
             border: 1px solid #000;
             font-weight: bold;
         }
         
         td {
-            padding: 8px 8px;
+            padding: 10px; /* 🔴 CAMBIADO: de 8px a 10px */
             border: 1px solid #ddd;
-            font-size: 8px;
+            font-size: 12px; /* 🔴 CAMBIADO: de 10px a 12px */
         }
         
         tr:nth-child(even) {
@@ -138,7 +142,7 @@
         }
         
         .totales p {
-            font-size: 11px;
+            font-size: 14px; /* 🔴 CAMBIADO: de 12px a 14px */
             font-weight: bold;
             margin: 5px 0;
             color: #000;
@@ -150,12 +154,16 @@
             padding-top: 25px;
         }
         
+        .firma-section strong {
+            font-size: 13px; /* 🔴 AGREGADO: tamaño para firmas */
+        }
+        
         .footer {
             margin-top: 30px;
             padding-top: 15px;
             border-top: 1px solid #ccc;
             text-align: center;
-            font-size: 8px;
+            font-size: 11px; /* 🔴 CAMBIADO: de 9px a 11px */
             color: #666;
         }
     </style>
@@ -169,7 +177,7 @@
                 <img src="data:image/png;base64,{{ base64_encode(file_get_contents(public_path('images/logo.png'))) }}" alt="Logo">
             </div>
             <div class="header-content">
-                <h1> DESPACHO DE LENGUAS</h1>
+                <h1>DESPACHO DE LENGUAS</h1>
             </div>
         </div>
         
@@ -198,12 +206,14 @@
                 <div class="info-cell info-value">{{ $despacho->lenguas }}</div>
             </div>
         </div>
+        
         <!-- NOTA INFORMATIVA -->
-<div style="margin-bottom: 15px; padding: 10px; background-color: #f0f8ff; border-left: 4px solid #7ce8ad;">
-    <p style="font-size: 9px; line-height: 1.4; margin: 0;">
-        <strong>Nota:</strong> Los productos relacionados a continuación, se despachan a conformidad, aptos para consumo humano, no presentan cambios en sus características organolépticas.
-    </p>
-</div>
+        <div style="margin-bottom: 15px; padding: 12px; background-color: #f0f8ff; border-left: 4px solid #7ce8ad;">
+            <p style="font-size: 12px; line-height: 1.5; margin: 0;"> <!-- 🔴 CAMBIADO: de 10px a 12px -->
+                <strong>Nota:</strong> Los productos relacionados a continuación, se despachan a conformidad, aptos para consumo humano, no presentan cambios en sus características organolépticas.
+            </p>
+        </div>
+        
         <!-- TABLA DE PRODUCTOS - SOLO LENGUAS -->
         <table>
             <thead>
@@ -215,31 +225,39 @@
                 </tr>
             </thead>
             <tbody>
-                @foreach($despacho->productos as $producto)
-                    @if(str_ends_with($producto->codigo_producto, '-6000'))
-                        @php
-                            $destino = $producto->destino_especifico ?? '';
-                            if ($destino !== '') {
-                                $partes = explode('/', $destino);
-                                if (count($partes) >= 3) {
-                                    $destinoFormateado = trim(implode('/', array_slice($partes, 2)));
-                                } else {
-                                    $destinoFormateado = trim($destino);
-                                }
+                @php
+                    $productosLenguas = collect($despacho->productos)
+                        ->filter(function($producto) {
+                            return str_ends_with($producto->codigo_producto, '-6000');
+                        })
+                        ->sortBy('codigo_producto')
+                        ->values();
+                @endphp
+                
+                @foreach($productosLenguas as $producto)
+                    @php
+                        $destino = $producto->destino_especifico ?? '';
+                        if ($destino !== '') {
+                            $partes = explode('/', $destino);
+                            if (count($partes) >= 3) {
+                                $destinoFormateado = trim(implode('/', array_slice($partes, 2)));
                             } else {
-                                $destinoFormateado = '-';
+                                $destinoFormateado = trim($destino);
                             }
-                        @endphp
-                        <tr>
-                            <td>{{ $producto->codigo_producto }}</td>
-                            <td>{{ $producto->descripcion_producto ?? '-' }}</td>
-                            <td>{{ $producto->fecha_beneficio ? $producto->fecha_beneficio->format('d/m/Y') : '-' }}</td>
-                            <td>{{ $destinoFormateado }}</td>
-                        </tr>
-                    @endif
+                        } else {
+                            $destinoFormateado = '-';
+                        }
+                    @endphp
+                    <tr>
+                        <td>{{ $producto->codigo_producto }}</td>
+                        <td>{{ $producto->descripcion_producto ?? '-' }}</td>
+                        <td>{{ $producto->fecha_beneficio ? $producto->fecha_beneficio->format('d/m/Y') : '-' }}</td>
+                        <td>{{ $destinoFormateado }}</td>
+                    </tr>
                 @endforeach
             </tbody>
         </table>
+        
         <!-- FIRMAS -->
         <div class="firma-section">
             <table style="width: 100%; border-collapse: collapse;">
