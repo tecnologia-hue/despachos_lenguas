@@ -19,8 +19,8 @@
             width: 100%;
             max-width: 8.5in;
             margin: 0 auto;
-            font-family: Arial, sans-serif;
-            font-size: 13px; /* 🔴 CAMBIADO: de 11px a 13px */
+            font-family: 'Helvetica', 'Arial', sans-serif;
+            font-size: 13px;
             color: #000;
         }
 
@@ -44,12 +44,12 @@
         .logo-container {
             display: table-cell;
             vertical-align: middle;
-            width: 80px;
+            width: 100px;
             padding-right: 15px;
         }
         
         .logo-container img {
-            width: 70px;
+            width: 90px;
             height: auto;
         }
         
@@ -60,168 +60,172 @@
         }
         
         .header h1 {
-            font-size: 22px; /* 🔴 CAMBIADO: de 18px a 22px */
+            font-size: 22px;
             margin-bottom: 8px;
             font-weight: bold;
         }
         
         .header p {
-            font-size: 13px; /* 🔴 CAMBIADO: de 11px a 13px */
+            font-size: 13px;
             margin-bottom: 3px;
         }
         
-        /* INFO GRID */
-        .info-grid {
-            display: table;
+        /* TABLA DE INFORMACIÓN */
+        .info-table {
             width: 100%;
+            border-collapse: collapse;
             margin-bottom: 20px;
             margin-top: 10px;
         }
         
-        .info-row {
-            display: table-row;
+        .info-table tr {
+            border: 1px solid #000;
         }
         
-        .info-cell {
-            display: table-cell;
-            padding: 10px; /* 🔴 CAMBIADO: de 8px a 10px */
-            border: 1px solid #ccc;
+        .info-table td {
+            padding: 4px;
+            border-right: 1px solid #000;
             vertical-align: middle;
-            font-size: 13px; /* 🔴 CAMBIADO: de 11px a 13px */
+            font-size: 13px;
         }
         
-        .info-label {
+        .info-table td:last-child {
+            border-right: none;
+        }
+        
+        .info-table .info-label {
             font-weight: bold;
-            background-color: #f0f0f0;
-            width: 30%;
-            font-size: 13px; /* 🔴 CAMBIADO: de 11px a 13px */
-        }
-        
-        .info-value {
-            width: 70%;
-            font-size: 13px; /* 🔴 CAMBIADO: de 11px a 13px */
-        }
-        
-        /* TABLE */
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 15px;
-            margin-bottom: 15px;
-        }
-        
-        /* HEADER TABLA - COLOR VERDE INSTITUCIONAL */
-        th {
             background-color: #7ce8ad;
             color: #000;
-            padding: 12px 10px; /* 🔴 CAMBIADO: de 10px 8px a 12px 10px */
-            text-align: left;
-            font-size: 13px; /* 🔴 CAMBIADO: de 11px a 13px */
+        }
+        
+        /* WIDTHS AJUSTADOS */
+        .info-table td:nth-child(1) { width: 22%; }  /* Conductor: */
+        .info-table td:nth-child(2) { width: 40%; }  /* Valor conductor */
+        .info-table td:nth-child(3) { width: 25%; }  /* Placa / Remolque: */
+        .info-table td:nth-child(4) { width: 13%; }  /* Valor placa */
+
+        /* TABLA DE NOTA */
+        .nota-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+
+        .nota-table td {
+            padding: 5px;
+            border: 1px solid #000;
+            font-size: 11px;
+            line-height: 1.4;
+            background-color: #f0f8ff;
+        }
+        
+        /* TABLA DE PRODUCTOS */
+        .table-productos {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+            font-size: 10px;
+        }
+
+        .table-productos thead {
+            background-color: #7ce8ad;
+        }
+
+        .table-productos th {
+            padding: 4px 4px;
             border: 1px solid #000;
             font-weight: bold;
-        }
-        
-        td {
-            padding: 10px; /* 🔴 CAMBIADO: de 8px a 10px */
-            border: 1px solid #ddd;
-            font-size: 12px; /* 🔴 CAMBIADO: de 10px a 12px */
-        }
-        
-        tr:nth-child(even) {
-            background-color: #f9f9f9;
-        }
-        
-        /* TOTALES - COLOR ROSA INSTITUCIONAL */
-        .totales {
-            margin-top: 20px;
-            margin-bottom: 20px;
-            padding: 12px;
-            background-color: #f9dff8;
-            border: 2px solid #f9dff8;
-            border-radius: 4px;
-        }
-        
-        .totales p {
-            font-size: 14px; /* 🔴 CAMBIADO: de 12px a 14px */
-            font-weight: bold;
-            margin: 5px 0;
+            text-align: left;
+            font-size: 11px;
             color: #000;
         }
-        
-        /* FIRMAS */
-        .firma-section {
-            margin-top: 40px;
-            padding-top: 25px;
+
+        .table-productos td {
+            padding: 4px 4px;
+            border: 1px solid #999;
         }
-        
-        .firma-section strong {
-            font-size: 13px; /* 🔴 AGREGADO: tamaño para firmas */
+
+        .table-productos tbody tr:nth-child(even) {
+            background-color: #f5f5f5;
         }
-        
-        .footer {
-            margin-top: 30px;
-            padding-top: 15px;
-            border-top: 1px solid #ccc;
-            text-align: center;
-            font-size: 11px; /* 🔴 CAMBIADO: de 9px a 11px */
-            color: #666;
-        }
+
+       /* FIRMAS */
+.firma-section {
+    margin-top: 50px;
+    display: table;
+    width: 100%;
+    page-break-inside: avoid;
+}
+
+.firma-cell {
+    display: table-cell;
+    width: 50%;
+    text-align: center;
+    padding: 10px 15px 0 15px; /* 🔴 REDUCIDO: de 50px a 10px */
+}
+
+.firma-line {
+    width: 60%; /* 🔴 NUEVO: Ancho de la línea */
+    border-top: 1px solid #000; /* 🔴 NUEVO: Línea superior */
+    margin: 0 auto 5px auto; /* 🔴 NUEVO: Centrado y espacio debajo */
+    padding-top: 40px; /* 🔴 NUEVO: Espacio antes de la línea */
+}
+
+.firma-label {
+    font-weight: bold;
+    font-size: 12px;
+    margin-top: 5px;
+}
+
     </style>
 </head>
 <body>
     <div class="container">
         
-        <!-- HEADER CON LOGO -->
+        <!-- HEADER -->
         <div class="header">
             <div class="logo-container">
-                <img src="data:image/png;base64,{{ base64_encode(file_get_contents(public_path('images/logo.png'))) }}" alt="Logo">
+                <img src="data:image/png;base64,{{ base64_encode(file_get_contents(public_path('images/logo.png'))) }}" alt="Logo Colbeef">
             </div>
             <div class="header-content">
                 <h1>DESPACHO DE LENGUAS</h1>
             </div>
         </div>
-        
+
         <!-- INFORMACIÓN GENERAL -->
-        <div class="info-grid">
-            <div class="info-row">
-                <div class="info-cell info-label">Conductor:</div>
-                <div class="info-cell info-value">{{ $despacho->conductor }}</div>
-            </div>
-            <div class="info-row">
-                <div class="info-cell info-label">Placa / Remolque:</div>
-                <div class="info-cell info-value">{{ $despacho->placa_remolque }}</div>
-            </div>
-            <div class="info-row">
-                <div class="info-cell info-label">Destino General:</div>
-                <div class="info-cell info-value">{{ $despacho->destino_general }}</div>
-            </div>
-            <div class="info-row">
-                <div class="info-cell info-label">Fecha Expedición:</div>
-                <div class="info-cell info-value">
-                    {{ $despacho->fecha_expedicion ? $despacho->fecha_expedicion->format('d/m/Y H:i') : 'N/A' }}
-                </div>
-            </div>
-            <div class="info-row">
-                <div class="info-cell info-label">Total Lenguas:</div>
-                <div class="info-cell info-value">{{ $despacho->lenguas }}</div>
-            </div>
-        </div>
-        
-        <!-- NOTA INFORMATIVA -->
-        <div style="margin-bottom: 15px; padding: 12px; background-color: #f0f8ff; border-left: 4px solid #7ce8ad;">
-            <p style="font-size: 12px; line-height: 1.5; margin: 0;"> <!-- 🔴 CAMBIADO: de 10px a 12px -->
-                <strong>Nota:</strong> Los productos relacionados a continuación, se despachan a conformidad, aptos para consumo humano, no presentan cambios en sus características organolépticas.
-            </p>
-        </div>
-        
-        <!-- TABLA DE PRODUCTOS - SOLO LENGUAS -->
-        <table>
+        <table class="info-table">
+            <tr>
+                <td class="info-label">Conductor:</td>
+                <td class="info-value">{{ $despacho->conductor ?? 'N/A' }}</td>
+                <td class="info-label">Placa / Remolque:</td>
+                <td class="info-value">{{ $despacho->placa_remolque ?? 'N/A' }}</td>
+            </tr>
+            <tr>
+                <td class="info-label">Fecha Expedición:</td>
+                <td class="info-value">{{ $despacho->fecha_expedicion ? $despacho->fecha_expedicion->format('d/m/Y H:i') : 'N/A' }}</td>
+                <td class="info-label">Total Lenguas:</td>
+                <td class="info-value">{{ $despacho->lenguas ?? 'N/A' }}</td>
+            </tr>
+        </table>
+
+        <!-- NOTA -->
+        <table class="nota-table">
+            <tr>
+                <td>
+                    <strong>Nota:</strong> Los productos relacionados a continuación, se despachan a conformidad, aptos para consumo humano, no presentan cambios en sus características organolépticas.
+                </td>
+            </tr>
+        </table>
+
+        <!-- TABLA DE PRODUCTOS -->
+        <table class="table-productos">
             <thead>
                 <tr>
-                    <th style="width: 15%;">Código</th>
-                    <th style="width: 15%;">Descripción</th>
-                    <th style="width: 15%;">Fecha Beneficio</th>
-                    <th style="width: 55%;">Destino</th>
+                    <th style="width: 16%;">Código</th>
+                    <th style="width: 12%;">Descripción</th>
+                    <th style="width: 14%;">Fecha Beneficio</th>
+                    <th style="width: 58%;">Destino</th>
                 </tr>
             </thead>
             <tbody>
@@ -257,24 +261,19 @@
                 @endforeach
             </tbody>
         </table>
-        
+
         <!-- FIRMAS -->
-        <div class="firma-section">
-            <table style="width: 100%; border-collapse: collapse;">
-                <tr>
-                    <td style="width: 50%; text-align: center; padding: 50px 15px 15px 15px; border: none;">
-                        <div style="border-top: 1px solid #000; padding-top: 8px;">
-                            <strong>Entrega</strong>
-                        </div>
-                    </td>
-                    <td style="width: 50%; text-align: center; padding: 50px 15px 15px 15px; border: none;">
-                        <div style="border-top: 1px solid #000; padding-top: 8px;">
-                            <strong>Recibe</strong>
-                        </div>
-                    </td>
-                </tr>
-            </table>
-        </div>        
+<div class="firma-section">
+    <div class="firma-cell">
+        <div class="firma-line"></div>
+        <div class="firma-label">Entrega</div>
+    </div>
+    <div class="firma-cell">
+        <div class="firma-line"></div>
+        <div class="firma-label">Recibe</div>
+    </div>
+</div>
+
     </div>
 </body>
 </html>
