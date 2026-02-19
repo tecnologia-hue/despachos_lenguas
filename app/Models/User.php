@@ -113,4 +113,8 @@ class User extends Authenticatable
     {
         return "{$this->first_name} {$this->last_name}";
     }
+    public function despachosCreados()
+    {
+        return $this->hasMany(Despacho::class, 'created_by');
+    }
 }

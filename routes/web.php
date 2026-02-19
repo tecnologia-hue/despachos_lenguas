@@ -3,6 +3,7 @@
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\DespachoController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\ReportController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -44,6 +45,14 @@ Route::middleware(['auth', 'role:admin'])->prefix('users')->name('users.')->grou
     Route::put('/{user}', [UserController::class, 'update'])->name('update');
     Route::post('/{user}/toggle-status', [UserController::class, 'toggleStatus'])->name('toggle-status');
     Route::post('/{user}/reset-password', [UserController::class, 'resetPassword'])->name('reset-password');
+});
+
+// Reportes (solo admin) - ¡CORREGIDO!
+Route::middleware(['auth', 'role:admin'])->prefix('reports')->name('reports.')->group(function () {
+    Route::get('/despachos-por-usuario', [ReportController::class, 'despachosPorUsuario'])
+        ->name('despachos-por-usuario');
+    Route::get('/historico-completo', [ReportController::class, 'historicoCompleto'])
+        ->name('historico-completo');
 });
 
 require __DIR__.'/auth.php';

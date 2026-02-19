@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Auth;
 
 class Despacho extends Model
 {
@@ -17,6 +18,7 @@ class Despacho extends Model
         'lenguas',
         'archivo_original',
         'usuario_id',
+        'created_by', // ← NUEVO: Quién creó el despacho
     ];
 
     protected $casts = [
@@ -30,9 +32,25 @@ class Despacho extends Model
         return $this->hasMany(DespachoProducto::class);
     }
 
-    // Relación: Un despacho pertenece a un usuario
+    // Relación: Un despacho pertenece a un usuario (ANTIGUA)
     public function usuario()
     {
         return $this->belongsTo(User::class, 'usuario_id');
+    }
+
+    // ← NUEVA RELACIÓN: Quién creó realmente el despacho
+    public function creator()
+    {
+        return $this->belongsTo(User::class, 'created_by');
+    }
+
+    // ← NUEVO: Auto-asignar creador al crear
+    protected static function booted()
+    {
+        static::creating(function ($despacho) {
+            if (Auth::check()) {
+                $despacho->created_by = Auth::id();
+            }
+        });
     }
 }

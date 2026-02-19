@@ -16,7 +16,7 @@
 
             {{-- Tarjetas de acceso rápido --}}
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                
+
                 {{-- Card: Despachos --}}
                 <a href="{{ route('despachos.index') }}" class="group">
                     <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg hover:shadow-lg transition-shadow duration-300">
@@ -99,8 +99,50 @@
                     </div>
                 </a>
 
-            </div>
+                {{-- SOLO ADMIN: Reportes --}}
+                @role('admin')
+                {{-- Card: Reporte Despachos por Usuario --}}
+                <a href="{{ route('reports.despachos-por-usuario') }}" class="group">
+                    <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg hover:shadow-lg transition-shadow duration-300 border-l-4 border-blue-500">
+                        <div class="p-6">
+                            <div class="flex items-center justify-between mb-4">
+                                <div class="flex-shrink-0 bg-blue-50 rounded-lg p-3 group-hover:bg-blue-100 transition-colors">
+                                    <svg class="w-8 h-8 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3v18h18M7 13l3 3 7-7"/>
+                                    </svg>
+                                </div>
+                                <span class="text-xs font-semibold text-blue-600 bg-blue-50 px-3 py-1 rounded-full">
+                                    Reporte
+                                </span>
+                            </div>
+                            <h3 class="text-xl font-semibold text-gray-900 mb-2">Despachos por Usuario</h3>
+                            <p class="text-gray-600 text-sm">Ver cuántos despachos ha creado cada usuario.</p>
+                        </div>
+                    </div>
+                </a>
 
+                {{-- Card: Histórico Completo --}}
+                <a href="{{ route('reports.historico-completo') }}" class="group">
+                    <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg hover:shadow-lg transition-shadow duration-300 border-l-4 border-green-500">
+                        <div class="p-6">
+                            <div class="flex items-center justify-between mb-4">
+                                <div class="flex-shrink-0 bg-green-50 rounded-lg p-3 group-hover:bg-green-100 transition-colors">
+                                    <svg class="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/>
+                                    </svg>
+                                </div>
+                                <span class="text-xs font-semibold text-green-600 bg-green-50 px-3 py-1 rounded-full">
+                                    Histórico
+                                </span>
+                            </div>
+                            <h3 class="text-xl font-semibold text-gray-900 mb-2">Histórico de Despachos</h3>
+                            <p class="text-gray-600 text-sm">Ver todos los despachos registrados en el sistema.</p>
+                        </div>
+                    </div>
+                </a>
+                @endrole
+
+            </div>
         </div>
     </div>
 </x-app-layout>

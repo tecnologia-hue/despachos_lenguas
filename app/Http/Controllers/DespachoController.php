@@ -8,17 +8,41 @@ use Illuminate\Http\Request;
 use Maatwebsite\Excel\Facades\Excel;
 use Barryvdh\DomPDF\Facade\Pdf;
 use App\Services\ImagenLlavesService;
+use Illuminate\Support\Facades\Auth;
 
 class DespachoController extends Controller
 {
     /**
      * Listado de despachos.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $despachos = Despacho::where('usuario_id', auth()->id())
-            ->latest()
-            ->paginate(10);
+        $query = Despacho::with(['creator', 'usuario'])->latest();
+
+        // LÓGICA DE FILTRADO:
+        
+        // 1. Si es ADMIN y quiere ver despachos de OTRO (desde reporte)
+        if (Auth::user()->hasRole('admin') && $request->filled('created_by')) {
+            $query->where('created_by', $request->created_by);
+        }
+        
+        // 2. Si NO es admin, SOLO ve los suyos (propiedad 'usuario_id' o 'created_by')
+        elseif (!Auth::user()->hasRole('admin')) {
+            $query->where(function($q) {
+                $q->where('usuario_id', Auth::id())
+                  ->orWhere('created_by', Auth::id());
+            });
+        }
+        
+        // 3. Si es ADMIN y NO filtra, ve TODO (comportamiento por defecto)
+        // Si prefieres que por defecto solo vea los suyos, descomenta esto:
+        /*
+        elseif (Auth::user()->hasRole('admin') && !$request->filled('created_by')) {
+             $query->where('created_by', Auth::id());
+        }
+        */
+
+        $despachos = $query->paginate(10);
 
         return view('despachos.index', compact('despachos'));
     }
@@ -57,7 +81,8 @@ class DespachoController extends Controller
      */
     public function show(Despacho $despacho)
     {
-        if ($despacho->usuario_id !== auth()->id()) {
+        // PERMITIR VER SI: Es dueño O es Admin
+        if ($despacho->usuario_id !== auth()->id() && !Auth::user()->hasRole('admin')) {
             abort(403, 'No tienes permiso para ver este despacho');
         }
 
@@ -71,7 +96,8 @@ class DespachoController extends Controller
      */
     public function generatePDF(Despacho $despacho)
     {
-        if ($despacho->usuario_id !== auth()->id()) {
+        // PERMITIR VER SI: Es dueño O es Admin
+        if ($despacho->usuario_id !== auth()->id() && !Auth::user()->hasRole('admin')) {
             abort(403, 'No tienes permiso para ver este despacho');
         }
 
@@ -89,8 +115,8 @@ class DespachoController extends Controller
      */
     public function generatePDFPersonalizado(Despacho $despacho, Request $request)
     {
-        // Verificar autorización
-        if ($despacho->usuario_id !== auth()->id()) {
+        // PERMITIR VER SI: Es dueño O es Admin
+        if ($despacho->usuario_id !== auth()->id() && !Auth::user()->hasRole('admin')) {
             abort(403, 'No tienes permiso para ver este despacho');
         }
 
@@ -127,8 +153,8 @@ class DespachoController extends Controller
      */
     public function generateImagenLlaves(Despacho $despacho, ImagenLlavesService $imagenService)
     {
-        // Verificar autorización
-        if ($despacho->usuario_id !== auth()->id()) {
+        // PERMITIR VER SI: Es dueño O es Admin
+        if ($despacho->usuario_id !== auth()->id() && !Auth::user()->hasRole('admin')) {
             abort(403, 'No tienes permiso para generar llaves de este despacho');
         }
 
@@ -157,8 +183,8 @@ class DespachoController extends Controller
      */
     public function generateImagenLlavesPersonalizadas(Despacho $despacho, ImagenLlavesService $imagenService, Request $request)
     {
-        // Verificar autorización
-        if ($despacho->usuario_id !== auth()->id()) {
+        // PERMITIR VER SI: Es dueño O es Admin
+        if ($despacho->usuario_id !== auth()->id() && !Auth::user()->hasRole('admin')) {
             abort(403, 'No tienes permiso para generar llaves de este despacho');
         }
 
