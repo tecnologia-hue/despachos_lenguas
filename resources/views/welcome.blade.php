@@ -217,7 +217,7 @@
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="text-center text-gray-600">
                 <p>&copy; {{ date('Y') }} Colbeef. Todos los derechos reservados.</p>
-                <p class="text-sm mt-2">Sistema de Gestión de Despachos de Lenguas</p>
+                <p class="text-sm mt-2">Sistema de Gestión de Despachos de Lenguas - KallSu</p>
             </div>
         </div>
     </footer>

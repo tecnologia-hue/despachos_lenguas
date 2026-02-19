@@ -39,7 +39,8 @@ class ReportController extends Controller
             abort(403, 'Acceso denegado. Solo administradores.');
         }
 
-        $query = Despacho::with(['creator:name,first_name,last_name,username', 'usuario'])
+        // ⭐ CAMBIO AQUÍ: Simplificada la carga de la relación para asegurar que funcione
+        $query = Despacho::with(['creator', 'usuario'])
             ->latest('created_at');
 
         // Filtros opcionales

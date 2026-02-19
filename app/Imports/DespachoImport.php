@@ -35,6 +35,7 @@ class DespachoImport implements ToCollection
                 'lenguas' => 0,
                 'archivo_original' => request()->file('excel_file')->getClientOriginalName(),
                 'usuario_id' => $this->usuarioId,
+                'created_by' => $this->usuarioId, // <-- ESTE ES EL CAMBIO
             ]);
 
             $contadorLenguas = 0;
